@@ -1,0 +1,38 @@
+{
+    "name": "vscode-codeowners",
+    "displayName": "CODEOWNERS",
+    "description": "VS Code extensions for CODEOWNERS file",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.29.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/CODEOWNERS"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.parse",
+                "title": "CODEOWNERS: Show owners of current file"
+            }
+        ]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^8.10.25",
+        "prettier": "1.15.3",
+        "typescript": "^3.1.4",
+        "vscode": "^1.1.25"
+    },
+    "dependencies": {
+        "codeowners": "^4.0.2"
+    }
+}
