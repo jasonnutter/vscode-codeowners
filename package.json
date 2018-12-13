@@ -1,7 +1,9 @@
 {
     "name": "vscode-codeowners",
     "displayName": "CODEOWNERS",
-    "description": "VS Code extensions for CODEOWNERS file",
+    "description": "VS Code extension for CODEOWNERS file",
+    "publisher": "jasonnutter",
+    "license": "MIT",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.29.0"
@@ -16,7 +18,7 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.parse",
+                "command": "vscode-codeowners.show-owners",
                 "title": "CODEOWNERS: Show owners of current file"
             }
         ]

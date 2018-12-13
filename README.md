@@ -1,65 +1,20 @@
-# codeowners README
+# vscode-codeowners
 
-This is the README for your extension "codeowners". After writing up a brief description, we recommend including the following sections.
+VS Code extension to display the code owners for the current file, as defined in the [CODEOWNERS](https://help.github.com/articles/about-codeowners/) file.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Status bar
 
-For example if there is an image subfolder under your extension project workspace:
+![](./img/status_bar_none.png)
+![](./img/status_bar_one.png)
+![](./img/status_bar_two.png)
+![](./img/status_bar_three.png)
 
-\!\[feature X\]\(images/feature-x.png\)
+The first code owners for an open file will be displayed in the right side of the status bar. Clicking the status bar item will open a menu displaying all of the code owners.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Command
 
-## Requirements
+![](./img/command.gif)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Use the command palette to run the `CODEOWNERS: Show owners of current file` command, which will display all code owners for the current file.
