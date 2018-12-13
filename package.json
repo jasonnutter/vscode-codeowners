@@ -3,6 +3,9 @@
     "displayName": "CODEOWNERS",
     "description": "VS Code extension for CODEOWNERS file",
     "publisher": "jasonnutter",
+    "repository": {
+        "url": "https://github.com/jasonnutter/vscode-codeowners"
+    },
     "license": "MIT",
     "version": "1.0.0",
     "engines": {
