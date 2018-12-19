@@ -4,6 +4,10 @@ VS Code extension to display the code owners for the current file, as defined in
 
 ## Features
 
+### Syntax highlighting
+
+![](./img/syntax_highlighting.png)
+
 ### Status bar
 
 ![](./img/status_bar_none.png)

@@ -7,7 +7,7 @@
         "url": "https://github.com/jasonnutter/vscode-codeowners"
     },
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "engines": {
         "vscode": "^1.29.0"
     },
@@ -23,6 +23,26 @@
             {
                 "command": "vscode-codeowners.show-owners",
                 "title": "CODEOWNERS: Show owners of current file"
+            }
+        ],
+        "languages": [
+            {
+                "id": "codeowners",
+                "aliases": [
+                    "CODEOWNERS",
+                    "codeowners"
+                ],
+                "filenames": [
+                    "CODEOWNERS"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "codeowners",
+                "scopeName": "text.codeowners",
+                "path": "./syntaxes/codeowners.tmLanguage.json"
             }
         ]
     },
