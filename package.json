@@ -58,6 +58,7 @@
         "vscode": "^1.1.25"
     },
     "dependencies": {
-        "codeowners": "^4.0.2"
+        "codeowners": "^4.0.2",
+        "path": "^0.12.7"
     }
 }
