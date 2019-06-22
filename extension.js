@@ -15,7 +15,13 @@ const getOwners = () => {
         uri: { fsPath: workspacePath }
     } = vscode.workspace.getWorkspaceFolder(uri);
 
-    const folder = new Codeowners(workspacePath);
+    let folder;
+    try {
+        folder = new Codeowners(workspacePath);
+    } catch {
+        // no CODEOWNERS file
+        return null;
+    }
 
     const file = fileName.split(workspacePath)[1];
 
@@ -39,6 +45,11 @@ const activate = context => {
     context.subscriptions.push(
         vscode.window.onDidChangeActiveTextEditor(() => {
             const owners = getOwners();
+
+            if (!owners) {
+                statusBarItem.hide();
+                return;
+            }
 
             if (owners.length > 2) {
                 statusBarItem.text = `CODEOWNERS: ${owners[0]} & ${owners.length - 1} others`;
