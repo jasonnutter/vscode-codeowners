@@ -18,7 +18,7 @@ const getOwners = () => {
 
     const folder = new Codeowners(workspacePath);
 
-    const file = fileName.split(workspacePath + path.sep)[1];
+    const file = fileName.split(`${workspacePath}${path.sep}`)[1];
 
     return folder.getOwner(file);
 };
