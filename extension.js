@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 const Codeowners = require('codeowners');
+const path = require('path');
 
 const COMMAND_ID = 'vscode-codeowners.show-owners';
 const STATUS_BAR_PRIORITY = 100;
@@ -23,7 +24,7 @@ const getOwners = () => {
         return null;
     }
 
-    const file = fileName.split(workspacePath)[1];
+    const file = fileName.split(`${workspacePath}${path.sep}`)[1];
 
     return folder.getOwner(file);
 };
