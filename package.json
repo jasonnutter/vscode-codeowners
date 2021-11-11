@@ -58,6 +58,6 @@
         "vscode": "^1.1.36"
     },
     "dependencies": {
-        "codeowners": "^4.1.1"
+        "codeowners": "chrisgarber/codeowners#master"
     }
 }
