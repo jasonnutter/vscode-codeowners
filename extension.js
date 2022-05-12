@@ -10,22 +10,19 @@ const getOwners = () => {
         return [];
     }
 
-    const { fileName, uri } = vscode.window.activeTextEditor.document;
+    const activeTextEditor = vscode.window.activeTextEditor;
+    if (!activeTextEditor) return null;
 
-    const {
-        uri: { fsPath: workspacePath }
-    } = vscode.workspace.getWorkspaceFolder(uri);
-
+    const { fileName } = activeTextEditor.document;
     let folder;
     try {
-        folder = new Codeowners(workspacePath);
+        folder = new Codeowners(path.dirname(path.resolve(fileName)));
     } catch {
         // no CODEOWNERS file
         return null;
     }
 
-    const file = fileName.split(`${workspacePath}${path.sep}`)[1];
-
+    const file = path.relative(folder.codeownersDirectory, fileName)
     return folder.getOwner(file);
 };
 
