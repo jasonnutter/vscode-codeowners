@@ -73,7 +73,7 @@ const activate = context => {
                 statusBarItem.text = '$(account) None';
             }
 
-            statusBarItem.tooltip = 'CODEOWNERS';
+            statusBarItem.tooltip = 'Show CODEOWNERS';
             statusBarItem.show();
         })
     );
