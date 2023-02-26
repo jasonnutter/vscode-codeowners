@@ -38,8 +38,19 @@ const activate = context => {
     context.subscriptions.push(statusBarItem);
 
     context.subscriptions.push(
-        vscode.commands.registerCommand(COMMAND_ID, () => {
-            vscode.window.showQuickPick(getOwners());
+        vscode.commands.registerCommand(COMMAND_ID, async () => {
+            // string | undefined
+            const res = await vscode.window.showQuickPick(getOwners());
+            if (res != null) {
+                const isTeamName = res.includes('/');
+                const githubUsername = res.split(/^@/)[1];
+
+                if (isTeamName) {
+                    const [org, name] = githubUsername.split(/\//);
+                    vscode.env.openExternal(vscode.Uri.parse(`https://github.com/orgs/${org}/teams/${name}`));
+                }
+                vscode.env.openExternal(vscode.Uri.parse(`https://github.com/${githubUsername}`));
+            }
         })
     );
 
