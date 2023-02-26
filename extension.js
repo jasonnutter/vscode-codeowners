@@ -64,16 +64,16 @@ const activate = context => {
             }
 
             if (owners.length > 2) {
-                statusBarItem.text = `CODEOWNERS: ${owners[0]} & ${owners.length - 1} others`;
+                statusBarItem.text = `$(account) ${owners[0]} & ${owners.length - 1} others`;
             } else if (owners.length === 2) {
-                statusBarItem.text = `CODEOWNERS: ${owners[0]} & 1 other`;
+                statusBarItem.text = `$(account) ${owners[0]} & 1 other`;
             } else if (owners.length === 1) {
-                statusBarItem.text = `CODEOWNERS: ${owners[0]}`;
+                statusBarItem.text = `$(account) ${owners[0]}`;
             } else {
-                statusBarItem.text = 'CODEOWNERS: None';
+                statusBarItem.text = '$(account) None';
             }
 
-            statusBarItem.tooltip = 'Show CODEOWNERS';
+            statusBarItem.tooltip = 'CODEOWNERS';
             statusBarItem.show();
         })
     );
