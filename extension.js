@@ -40,16 +40,23 @@ const activate = context => {
     context.subscriptions.push(
         vscode.commands.registerCommand(COMMAND_ID, async () => {
             // string | undefined
-            const res = await vscode.window.showQuickPick(getOwners());
+            const res = await vscode.window.showQuickPick(
+                getOwners().map(owner => ({
+                    label: owner,
+                    description: 'Open in GitHub'
+                }))
+            );
             if (res != null) {
-                const isTeamName = res.includes('/');
-                const githubUsername = res.split(/^@/)[1];
+                const isTeamName = res.label.includes('/');
+                const githubUsername = res.label.split(/^@/)[1];
+                console.log({ res, isTeamName, githubUsername });
 
                 if (isTeamName) {
                     const [org, name] = githubUsername.split(/\//);
                     vscode.env.openExternal(vscode.Uri.parse(`https://github.com/orgs/${org}/teams/${name}`));
+                } else {
+                    vscode.env.openExternal(vscode.Uri.parse(`https://github.com/${githubUsername}`));
                 }
-                vscode.env.openExternal(vscode.Uri.parse(`https://github.com/${githubUsername}`));
             }
         })
     );
@@ -73,7 +80,7 @@ const activate = context => {
                 statusBarItem.text = '$(account) None';
             }
 
-            statusBarItem.tooltip = 'Show CODEOWNERS';
+            statusBarItem.tooltip = owners.join(', ');
             statusBarItem.show();
         })
     );
