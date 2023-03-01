@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2.0.1 - 2023-02-28
+
+### Fixed
+
+- set minumum vscode version set to an old build so we can install the package. (#1)
+
 ## 2.0.0 - 2023-02-28
 
 ### Added
