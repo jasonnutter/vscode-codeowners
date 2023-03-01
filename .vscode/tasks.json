@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "npm",
+            "script": "compile",
+            "problemMatcher": [], 
+            "presentation": {
+                // "echo": true,
+                // "reveal": "silent",
+                // "focus": false,
+                // "panel": "new",
+                // "showReuseMessage": false,
+                // "clear": true,
+                "close": true
+            }
+        }
+    ]
+}

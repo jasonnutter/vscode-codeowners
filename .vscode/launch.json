@@ -12,7 +12,12 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}"
-            ]
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js",
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "preLaunchTask": "build"
         },
         {
             "name": "Extension Tests",
@@ -22,6 +27,9 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js",
             ]
         }
     ]
