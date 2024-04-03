@@ -22,3 +22,13 @@ The first code owners for an open file will be displayed in the right side of th
 ![](./img/command.gif)
 
 Use the command palette to run the `CODEOWNERS: Show owners of current file` command, which will display all code owners for the current file.
+
+
+## Modify CODEOWNERS file name
+
+You can modify the default CODEOWNERS file name to any custom name which your project uses:
+```json
+{
+    "codeowners.fileName": "MY_CUSTOM_CODEOWNERS"
+}
+```

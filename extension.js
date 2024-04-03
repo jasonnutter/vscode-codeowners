@@ -5,6 +5,12 @@ const path = require('path');
 const COMMAND_ID = 'vscode-codeowners.show-owners';
 const STATUS_BAR_PRIORITY = 100;
 
+// Function to get the custom CODEOWNERS file name or default to "CODEOWNERS"
+const getCodeownersFileName = () => {
+    const config = vscode.workspace.getConfiguration('codeowners');
+    return config.fileName || 'CODEOWNERS';
+};
+
 const getOwners = () => {
     if (!vscode.window.activeTextEditor) {
         return [];
@@ -18,7 +24,8 @@ const getOwners = () => {
 
     let folder;
     try {
-        folder = new Codeowners(workspacePath);
+        const codeownersFileName = getCodeownersFileName(); // Use the custom or default file name
+        folder = new Codeowners(path.join(workspacePath, '.github'), codeownersFileName); // Assuming CODEOWNERS is in the .github folder
     } catch {
         // no CODEOWNERS file
         return null;
@@ -70,5 +77,5 @@ const activate = context => {
 
 exports.activate = activate;
 
-const deactivate = () => {};
+const deactivate = () => { };
 exports.deactivate = deactivate;
