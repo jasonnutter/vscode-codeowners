@@ -6,7 +6,9 @@ export async function run(): Promise<void> {
 	// Create the mocha test
 	const mocha = new Mocha({
 		ui: 'tdd',
-		color: true
+		color: true,
+		// Writing settings can take a few seconds while VS Code is starting up.
+		timeout: 20000
 	});
 
 	const testsRoot = path.resolve(__dirname, '..');

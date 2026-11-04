@@ -30,6 +30,8 @@ Shows the first code owner. Click to see matching line in CODEOWNERS file.
 
 <img src="./images/syntax-highlighting.png" alt="syntax highlighting" height="284px"/>
 
+Escapes, wildcards, comments and owners are highlighted the way GitHub reads them, and patterns or owners that make GitHub skip a line are marked invalid. [`examples/CODEOWNERS`](examples/CODEOWNERS) has a rule for each case.
+
 #### Formatting
 
 > Enable formatting by setting `github-code-owners.format.enabled` to `true`.

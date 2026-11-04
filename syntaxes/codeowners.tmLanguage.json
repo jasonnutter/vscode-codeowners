@@ -5,31 +5,102 @@
       "include": "#comment"
     },
     {
-      "include": "#absolute-path-matcher"
+      "include": "#absolute-rule"
     },
     {
-      "include": "#pattern-matcher"
-    },
-    {
-      "include": "#owner-matcher"
+      "include": "#rule"
     }
   ],
   "repository": {
     "comment": {
-      "match": "\\s*(#.*)",
-      "name": "comment.line.codeowners"
+      "match": "(#).*$",
+      "name": "comment.line.number-sign.codeowners",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.codeowners"
+        }
+      }
     },
-    "absolute-path-matcher": {
-      "match": "^\\s*(/\\S+)",
-      "name": "entity.name.function.codeowners"
+    "absolute-rule": {
+      "begin": "^\\s*(/(?:[^\\s#\\\\]|\\\\.|\\\\$)*)",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.function.codeowners",
+          "patterns": [
+            {
+              "include": "#pattern-tokens"
+            }
+          ]
+        }
+      },
+      "end": "$",
+      "patterns": [
+        {
+          "include": "#owners"
+        }
+      ]
     },
-    "pattern-matcher": {
-      "match": "^\\s*(\\S+)",
-      "name": "entity.name.type.codeowners"
+    "rule": {
+      "begin": "^\\s*((?:[^\\s#\\\\]|\\\\.|\\\\$)+)",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.type.codeowners",
+          "patterns": [
+            {
+              "include": "#pattern-tokens"
+            }
+          ]
+        }
+      },
+      "end": "$",
+      "patterns": [
+        {
+          "include": "#owners"
+        }
+      ]
     },
-    "owner-matcher": {
-      "match": "\\S*\\s\\S*@\\S*",
-      "name": "storage.type.function.codeowners"
+    "pattern-tokens": {
+      "patterns": [
+        {
+          "match": "\\\\[ \\t#\\[\\]\\\\]",
+          "name": "constant.character.escape.codeowners"
+        },
+        {
+          "match": "\\\\.",
+          "name": "invalid.illegal.escape.codeowners"
+        },
+        {
+          "match": "[\\[\\]]",
+          "name": "invalid.illegal.bracket.codeowners"
+        },
+        {
+          "match": "\\*{3,}",
+          "name": "invalid.illegal.wildcard.codeowners"
+        },
+        {
+          "match": "\\*\\*|\\*|\\?",
+          "name": "keyword.operator.wildcard.codeowners"
+        }
+      ]
+    },
+    "owners": {
+      "patterns": [
+        {
+          "include": "#comment"
+        },
+        {
+          "match": "@[A-Za-z0-9_-]+(?:/[A-Za-z0-9_-]+)?(?=\\s|#|$)",
+          "name": "storage.type.function.codeowners"
+        },
+        {
+          "match": "[^\\s#@]+@[^\\s#@]+\\.[A-Za-z]{2,}(?=\\s|#|$)",
+          "name": "storage.type.function.codeowners"
+        },
+        {
+          "match": "[^\\s#]+",
+          "name": "invalid.illegal.owner.codeowners"
+        }
+      ]
     }
   },
   "scopeName": "text.codeowners"

@@ -1,0 +1,188 @@
+# An example CODEOWNERS file: the usual rules first, then a rule for each
+# way GitHub matches that's easy to get wrong, or that other CODEOWNERS
+# libraries get wrong. Each behavior here was checked on GitHub.
+#
+# GitHub doesn't use this file. It reads CODEOWNERS from .github/, the
+# repository root, or docs/, in that order, and ignores one over 3 MiB.
+#
+# The last rule matching a file sets its owners, so later rules override
+# earlier ones. A line GitHub rejects is skipped, as if it weren't there.
+#
+# "Other libraries" notes compare codeowners-rs (Rust), hmarr/codeowners
+# (Go), snyk/github-codeowners (Node) and sbdchd/codeowners (Python). See
+# https://github.com/chdsbd/codeowners-comparison for every case where each
+# disagrees with GitHub.
+
+
+# ---- The usual rules ----
+
+# Default owners, for every file no later rule matches.
+*                @acme/everyone
+
+# Every .js file, at any depth.
+*.js             @acme/frontend
+
+# An email address works as an owner, for the account that uses it.
+*.go             gopher@example.com
+
+# A leading slash anchors a pattern to the repository root, so this owns
+# `build/x` but not `src/build/x`. A trailing slash matches a directory,
+# and everything in it however deeply nested.
+/build/          @acme/release
+
+# Without a leading slash, a directory matches at any depth: `apps/` owns
+# `apps/x` and `src/apps/x`.
+apps/            @acme/apps
+
+# A slash in the middle anchors a pattern too, and `*` doesn't cross
+# slashes: `docs/*` owns `docs/a.md`, but not `docs/guides/a.md`.
+docs/*           @acme/docs
+
+# `**` between slashes matches any number of directories: `**/logs` owns
+# `logs/x`, `build/logs/x` and `a/b/logs/x`.
+**/logs          @acme/sre
+
+# A rule with no owners leaves its files without any, even though earlier
+# rules match them.
+/apps/legacy/
+
+
+# ---- Negation ----
+
+# `!` doesn't negate. Without a slash, GitHub drops it and matches files
+# named like the rest of the pattern, but not directories: `!secrets` owns
+# `secrets` and `config/secrets`, but not `secrets/key`.
+# Other libraries: all four match nothing, or reject the line.
+!secrets         @acme/security
+
+# With a slash, `!` is an ordinary character: this owns the file
+# `!important/notes.md`, nothing else.
+# Other libraries: hmarr rejects the line, and snyk matches nothing.
+!important/notes.md @acme/notes
+
+
+# ---- Wildcards ----
+
+# `?` matches one byte, not one character. `é` is two bytes in UTF-8, so
+# `?.txt` owns `a.txt` but not `é.txt`, and `??.txt` owns `é.txt`.
+# Other libraries: all four match one character.
+?.txt            @acme/one-byte
+??.txt           @acme/two-bytes
+
+# A trailing `/**/` matches files too, like a trailing `/**`:
+# `/vendor/**/` owns `vendor/x`, not just directories in vendor/.
+# Other libraries: sbdchd matches only directories. hmarr and snyk do too
+# for a bare `**/` or `/**/`, which on GitHub own every file.
+/vendor/**/      @acme/vendor
+
+# `**` that isn't between slashes is the same as `*`: `test**data` owns
+# `testdata` and `test-data/x`, but not `test/data`.
+test**data       @acme/fixtures
+
+# `***` makes GitHub skip the line.
+# Other libraries: codeowners-rs, snyk and sbdchd treat `***` like `*`.
+/tmp/***         @acme/tmp
+
+# Braces aren't special: this owns files and directories named `{a,b}`,
+# not `a` or `b`.
+# Other libraries: hmarr rejects the line.
+{a,b}            @acme/braces
+
+
+# ---- Brackets ----
+
+# GitHub has no character ranges, so an unescaped `[` or `]` makes it skip
+# the line. That catches route directories like Next.js's `[id]`.
+# Other libraries: codeowners-rs and hmarr treat this as owning
+# `app/[id]/page.tsx`.
+/app/[id]/       @acme/web
+
+# Escape them instead: this owns `app/[id]/page.tsx`. Escaped brackets also
+# match a path with the backslashes in it, like `app/\[id\]/page.tsx`, but
+# not a mix of the two, like `app/\[id]/page.tsx`.
+# Other libraries: none match that second path.
+/app/\[id\]/     @acme/web
+
+# Without a slash, a pattern starting with `\[` matches nothing: this
+# doesn't own `[draft]notes.md`. Start it with `**/` instead.
+# Other libraries: all four match it.
+\[draft\]*       @acme/drafts
+**/\[draft\]*    @acme/drafts
+
+# Escaped brackets must pair up by count, or the pattern matches nothing:
+# this doesn't own `notes[1`.
+# Other libraries: all four match it.
+notes\[1         @acme/notes
+
+
+# ---- Escapes and comments ----
+
+# `\` only escapes a space, a tab, `#`, `[`, `]` or `\`. Escaping anything
+# else makes GitHub skip the line.
+# Other libraries: all four read `\*` as a literal `*`.
+\*.bak           @acme/backups
+
+# A `\` at the end of a pattern escapes nothing and is dropped. Since a `\`
+# before a space or tab escapes it, the pattern has to end the line, so the
+# rule never has owners. Without a slash, this leaves `x/drafts` with no
+# owner, but not `drafts\`.
+drafts\
+
+# With a slash, the pattern also matches the `\` literally: this leaves
+# both `notes` and `notes\` with no owner.
+/notes\
+
+# A pattern of nothing but slashes is accepted but matches nothing.
+/                @acme/root
+
+# So is one with a `.` or `..` segment, since git paths never have one:
+# this doesn't own `src/x`.
+./src/           @acme/src
+
+# An escaped space is part of the pattern.
+# Other libraries: snyk rejects the line.
+My\ Documents/   @acme/docs
+
+# `\\` is a literal backslash: this owns `win\path`.
+# Other libraries: codeowners-rs matches nothing.
+win\\path        @acme/windows
+
+# An unescaped `#` starts a comment anywhere, even inside a pattern. This
+# line is the pattern `/src/C` with no owners: it leaves `src/C/x` with no
+# owner, and doesn't match `src/C#/x`.
+# Other libraries: sbdchd reads `/src/C#/` as the pattern.
+/src/C#/ @acme/csharp
+
+# Escape `#` to match it: this owns `src/C#/x`, and `#notes` anywhere.
+# GitHub's docs say this escape doesn't work, but it does.
+# Other libraries: hmarr and snyk match nothing.
+/src/C\#/        @acme/csharp
+\#notes          @acme/notes
+
+
+# ---- Case and non-ASCII ----
+
+# Patterns are case-sensitive: this owns `README.MD`, not `README.md`.
+# Other libraries: snyk ignores case.
+*.MD             @acme/docs
+
+# Non-ASCII patterns work: this owns everything in directories named `日本語`.
+# Other libraries: hmarr rejects the line.
+日本語/          @acme/i18n
+
+
+# ---- Owners ----
+
+# GitHub skips a line if any owner isn't an @user, an @org/team, or an
+# email address with a dot in its domain. Each of these lines is skipped,
+# so their files keep the owners of earlier rules.
+/owners/one/     @first.last
+/owners/two/     @acme/team/sub
+/owners/three/   admin@localhost
+/owners/four/    @acme/ok not-an-owner
+
+# A user or team that doesn't exist, or can't access the repository,
+# doesn't make GitHub skip the line. The line still applies to its files,
+# but GitHub has no one to request a review from, so in practice they have
+# no owner.
+/owners/five/    @no-such-user
