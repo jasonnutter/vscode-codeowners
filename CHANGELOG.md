@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Improve syntax highlighting (#39).
+- Publish to the Marketplace from GitHub Actions with trusted publishing (#40).
 
 ## 4.2.0 - 2026-03-14
 

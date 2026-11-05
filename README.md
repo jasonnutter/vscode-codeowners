@@ -60,7 +60,7 @@ Download the extension package from the [latest Github release](https://github.c
 
 ### From source
 
-With `vsce` installed from NPM (`yarn global add vsce`), clone [this repo](https://github.com/chdsbd/vscode-github-code-owners) and run `vsce package`. Install the resulting package with `code --install-extension github-code-owners-*.vsix`
+Clone [this repo](https://github.com/chdsbd/vscode-github-code-owners) and run `npm ci` and `npm run package`. Install the resulting package with `code --install-extension github-code-owners-*.vsix`
 
 ## Related extensions
 
