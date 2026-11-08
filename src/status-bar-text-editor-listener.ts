@@ -1,5 +1,6 @@
 import vscode from "vscode"
-import { getOwnership } from "./show-owners-command"
+import { getOwnership, type Ownership } from "./show-owners-command"
+import type { CodeownersLanguageServer } from "./language-server"
 
 function formatNames(owners: string[]): string {
   if (owners.length > 2) {
@@ -13,16 +14,11 @@ function formatNames(owners: string[]): string {
   }
 }
 
-function formatToolTip({
-  owners,
-  lineno,
-}: {
-  owners: string[]
-  lineno: number
-}): string {
-  if (owners.length === 0) {
+function formatToolTip({ rule }: Ownership, owners: string[]): string {
+  if (rule == null || owners.length === 0) {
     return "No Owners"
   }
+  const lineno = rule.range.start.line + 1
 
   if (owners.length <= 2) {
     return `Owned by ${owners.join(" and ")}\n(from CODEOWNERS line ${lineno})`
@@ -36,18 +32,20 @@ function formatToolTip({
 export function statusBarTextEditorListener(
   statusBarItem: vscode.StatusBarItem,
   outputChannel: vscode.OutputChannel,
+  getServer: () => CodeownersLanguageServer | null,
 ) {
   return async () => {
-    const res = await getOwnership(outputChannel)
+    const res = await getOwnership(outputChannel, getServer())
 
     if (!res) {
       statusBarItem.hide()
       return
     }
 
-    statusBarItem.text = `$(shield) ${formatNames(res.owners)}`
+    const owners = (res.rule?.owners ?? []).map((x) => x.replace(/^@/, ""))
+    statusBarItem.text = `$(shield) ${formatNames(owners)}`
 
-    statusBarItem.tooltip = formatToolTip(res)
+    statusBarItem.tooltip = formatToolTip(res, owners)
     statusBarItem.show()
   }
 }

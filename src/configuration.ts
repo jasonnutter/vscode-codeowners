@@ -72,3 +72,10 @@ export function getTeamMappingSlack(): Array<SlackMappingConfigurationItem> {
       ) ?? []
   )
 }
+
+export function getLanguageServerPath(): string | null {
+  const setting = vscode.workspace
+    .getConfiguration()
+    .get<string>("githubCodeOwners.languageServer.path")
+  return setting || null
+}

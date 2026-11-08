@@ -7,8 +7,24 @@ on:
 permissions: {}
 
 jobs:
+  # A build for each platform bundles gh-codeowners as the language server.
+  # The universal build has no binary, for other platforms, and falls back to
+  # the built-in features.
   publish:
     if: ${{ !github.event.release.prerelease }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - darwin-arm64
+          - darwin-x64
+          - linux-x64
+          - linux-arm64
+          - alpine-x64
+          - alpine-arm64
+          - win32-x64
+          - win32-arm64
+          - universal
     runs-on: ubuntu-latest
     environment: marketplace
     permissions:
@@ -28,5 +44,18 @@ jobs:
         run: test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
       - name: Install dependencies
         run: npm ci
+      - name: Download gh-codeowners
+        if: matrix.target != 'universal'
+        run: ./s/download-server "$TARGET"
+        env:
+          TARGET: ${{ matrix.target }}
+          GH_TOKEN: ${{ github.token }}
       - name: Publish to Visual Studio Marketplace
-        run: npx --no-install vsce publish --oidc
+        run: |
+          if [[ "$TARGET" == universal ]]; then
+            npx --no-install vsce publish --oidc
+          else
+            npx --no-install vsce publish --oidc --target "$TARGET"
+          fi
+        env:
+          TARGET: ${{ matrix.target }}

@@ -2,10 +2,17 @@ import vscode from "vscode"
 import path from "path"
 
 import { OwnershipEngine } from "@snyk/github-codeowners/dist/lib/ownership"
+import type { CodeownersLanguageServer } from "./language-server"
+
+export type Ownership = {
+  codeowners: vscode.Uri
+  /** The owning rule, or null if no rule owns the file. */
+  rule: { range: vscode.Range; owners: string[] } | null
+}
 
 async function fileExists(path: string): Promise<boolean> {
   try {
-    await vscode.workspace.fs.stat(vscode.Uri.parse(path))
+    await vscode.workspace.fs.stat(vscode.Uri.file(path))
     return true
   } catch (e: unknown) {
     // @ts-expect-error we should see this error.
@@ -29,23 +36,12 @@ async function findCodeOwnersFile(
   return null
 }
 
-export async function getOwnership(
+/** Find the owner without the language server. */
+async function getBuiltInOwnership(
+  document: vscode.TextDocument,
   outputChannel: vscode.OutputChannel,
-): Promise<
-  | {
-      kind: "match"
-      owners: string[]
-      lineno: number
-      filePath: string
-    }
-  | { kind: "no-match"; filePath: string; owners: []; lineno: 0 }
-  | null
-> {
-  if (!vscode.window.activeTextEditor) {
-    return null
-  }
-
-  const { fileName, uri } = vscode.window.activeTextEditor.document
+): Promise<Ownership | null> {
+  const { fileName, uri } = document
 
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri)
 
@@ -70,45 +66,60 @@ export async function getOwnership(
 
   const codeOwners = OwnershipEngine.FromCodeownersFile(codeownersFilePath)
   const res = codeOwners.calcFileOwnership(file)
+  const codeowners = vscode.Uri.file(codeownersFilePath)
 
   if (res == null) {
     outputChannel.appendLine(`No owners for file: ${file}`)
-    return {
-      kind: "no-match",
-      filePath: codeownersFilePath,
-      owners: [],
-      lineno: 0,
-    }
+    return { codeowners, rule: null }
   }
 
-  outputChannel.appendLine(`Found code owners for file: ${workspacePath}`)
-
+  const codeownersDocument = await vscode.workspace.openTextDocument(codeowners)
   return {
-    ...res,
-    kind: "match",
-    owners: res.owners.map((x) => x.replace(/^@/, "")),
-    filePath: codeownersFilePath,
+    codeowners,
+    rule: {
+      range: codeownersDocument.lineAt(res.lineno).range,
+      owners: res.owners,
+    },
   }
 }
 
-export function showOwnersCommandHandler(outputChannel: vscode.OutputChannel) {
+export async function getOwnership(
+  outputChannel: vscode.OutputChannel,
+  server: CodeownersLanguageServer | null,
+): Promise<Ownership | null> {
+  const document = vscode.window.activeTextEditor?.document
+  if (document == null) {
+    return null
+  }
+  if (server == null) {
+    return getBuiltInOwnership(document, outputChannel)
+  }
+  if (document.uri.scheme !== "file") {
+    return null
+  }
+  try {
+    return await server.owner(document.uri)
+  } catch (e) {
+    outputChannel.appendLine(`Could not find owners of ${document.uri}: ${e}`)
+    return null
+  }
+}
+
+export function showOwnersCommandHandler(
+  outputChannel: vscode.OutputChannel,
+  getServer: () => CodeownersLanguageServer | null,
+) {
   return async () => {
-    const ownership = await getOwnership(outputChannel)
+    const ownership = await getOwnership(outputChannel, getServer())
     if (ownership == null) {
       return
     }
-    const doc = await vscode.workspace.openTextDocument(ownership.filePath)
-    if (ownership.kind === "match") {
+    const doc = await vscode.workspace.openTextDocument(ownership.codeowners)
+    if (ownership.rule != null) {
+      const { range } = ownership.rule
       const textEditor = await vscode.window.showTextDocument(doc)
-      const line = doc.lineAt(ownership.lineno)
-
-      // select the line.
-      textEditor.selection = new vscode.Selection(
-        line.range.start,
-        line.range.end,
-      )
-      // scroll the line into focus.
-      textEditor.revealRange(line.range, vscode.TextEditorRevealType.InCenter)
+      textEditor.selection = new vscode.Selection(range.start, range.end)
+      textEditor.revealRange(range, vscode.TextEditorRevealType.InCenter)
     }
   }
 }

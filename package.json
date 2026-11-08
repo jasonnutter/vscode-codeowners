@@ -21,7 +21,7 @@
     "url": "https://github.com/chdsbd/vscode-github-code-owners/issues"
   },
   "engines": {
-    "vscode": "^1.53.0"
+    "vscode": "^1.91.0"
   },
   "categories": [
     "Programming Languages",
@@ -29,7 +29,8 @@
     "Other"
   ],
   "activationEvents": [
-    "workspaceContains:**/CODEOWNERS"
+    "workspaceContains:**/CODEOWNERS",
+    "onLanguage:codeowners"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -74,6 +75,13 @@
           "minimum": 1,
           "order": 2,
           "description": "Space offset to use from the longest file pattern the first code owner when aligning."
+        },
+        "githubCodeOwners.languageServer.path": {
+          "order": 4,
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Path to a [gh-codeowners](https://github.com/chdsbd/gh-codeowners) binary to run as the language server, instead of the one bundled with the extension. Takes effect after reloading the window."
         },
         "githubCodeOwners.teamMapping.slack": {
           "order": 3,
@@ -215,7 +223,7 @@
     "@types/lodash": "^4.14.195",
     "@types/mocha": "^10.0.4",
     "@types/node": "^24.19.2",
-    "@types/vscode": "^1.53.0",
+    "@types/vscode": "^1.91.0",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
     "@vscode/test-cli": "^0.0.9",
@@ -231,7 +239,8 @@
   },
   "dependencies": {
     "@snyk/github-codeowners": "github:chdsbd/github-codeowners#bb24c2adb022a88e03f25a3680a23934a281a5c3",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "vscode-languageclient": "^11.0.0"
   },
   "volta": {
     "node": "24.22.1"
